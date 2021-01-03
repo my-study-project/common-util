@@ -73,7 +73,7 @@ public class SnowFlake {
      * @Author: 渡劫 dujie
      * @Date: 2021/1/1 10:08 PM
      **/
-    private synchronized long nextId() {
+    public synchronized long nextId() {
         long currStmp = System.currentTimeMillis();
         if (currStmp < lastStmp) {
             throw new RuntimeException("Clock moved backwards.  Refusing to generate id");
@@ -109,10 +109,5 @@ public class SnowFlake {
             mill = System.currentTimeMillis();
         }
         return mill;
-    }
-
-    public String getUuid() {
-        SnowFlake snowFlake = new SnowFlake(2, 3);
-        return String.valueOf(snowFlake.nextId());
     }
 }
