@@ -94,4 +94,19 @@ public class NetUtils {
         }
         return "1";
     }
+
+    /**
+     * @Description: 获取ip的第三组数据
+     * @param ip
+     * @Return: java.lang.String
+     * @Author: 渡劫 dujie
+     * @Date: 2021/1/4 12:49 PM
+     **/
+    public static String getThreeIp(String ip){
+        if (StringUtils.isNotBlank(ip)) {
+            String[] ipList = StringUtils.split(ip, ".");
+            return ipList[ipList.length - 2];
+        }
+        return "1";
+    }
 }

@@ -19,11 +19,11 @@ public class SnowFlake {
     /**
      * 机器标识占用的位数
      **/
-    private final static long MACHINE_BIT = 5;
+    private final static long MACHINE_BIT = 8;
     /**
      * 数据中心占用的位数
      **/
-    private final static long DATACENTER_BIT = 5;
+    private final static long DATACENTER_BIT = 8;
 
     /**
      * 每一部分的最大值

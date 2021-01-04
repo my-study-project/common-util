@@ -1,8 +1,7 @@
 package com.js;
 
-import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.HashMap;
 import java.util.UUID;
 
 /**
@@ -10,7 +9,8 @@ import java.util.UUID;
  */
 public class IdUtil {
 
-    private static HashMap<String,SnowFlake> snowFlakeHashMap = new HashMap<>();
+    @Autowired
+    private static SnowFlakeUtil snowFlakeUtil;
 
     private IdUtil() {
         throw new IllegalStateException("IdUtils工具异常");
@@ -21,12 +21,8 @@ public class IdUtil {
     }
 
     public static synchronized String getUuid() {
-        SnowFlake snowFlake = snowFlakeHashMap.get("snowFlake");
-        if (ObjectUtils.isEmpty(snowFlake)){
-            snowFlake = new SnowFlake(2, 3);
-            snowFlakeHashMap.put("snowFlake",snowFlake);
-        }
-        return String.valueOf(snowFlake.nextId()).replace("-", "");
+
+        return String.valueOf(snowFlakeUtil.getInstance().nextId()).replace("-", "");
     }
 
     public static void main(String[] args) {
