@@ -1,10 +1,10 @@
-package com.js;
+package com.js.snow;
 
+
+import com.js.net.NetUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 @Slf4j
-@Component
 public class SnowFlakeUtil {
     private static volatile SnowFlake instance;
 
@@ -18,12 +18,12 @@ public class SnowFlakeUtil {
      **/
     private static volatile long machineId;
 
-    public SnowFlake getInstance() {
+    public static SnowFlake getInstance() {
         if (instance == null) {
             synchronized (SnowFlake.class) {
                 if (instance == null) {
                     initManyId();
-                    log.info("获取雪花算法工具包为空，开始初始化雪花算法工具包数据中心id={},机器id={}",datacenterId,machineId);
+                    log.info("获取雪花算法工具包为空，开始初始化雪花算法工具包数据中心id={},机器id={}", datacenterId, machineId);
                     instance = new SnowFlake(machineId, datacenterId);
                 }
             }
@@ -31,8 +31,10 @@ public class SnowFlakeUtil {
         return instance;
     }
 
-    private void initManyId(){
-        datacenterId = Long.valueOf(NetUtils.getThreeIp(NetUtils.getLocalIp()));
-        machineId = Long.valueOf(NetUtils.getLastIp(NetUtils.getLocalIp()));
+    private static void initManyId() {
+        String ip = NetUtils.getHostIp();
+        log.info("当前环境的ip为{}",ip);
+        datacenterId = Long.valueOf(NetUtils.getThreeIp(ip));
+        machineId = Long.valueOf(NetUtils.getLastIp(ip));
     }
 }

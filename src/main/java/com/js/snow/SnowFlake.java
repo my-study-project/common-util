@@ -1,4 +1,4 @@
-package com.js;
+package com.js.snow;
 
 /**
  * @Description: twitter的snowflake算法 -- java实现
