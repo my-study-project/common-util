@@ -12,9 +12,6 @@ import java.util.UUID;
  */
 public class IdUtil {
 
-    @Autowired
-    private static SnowFlakeUtil snowFlakeUtil;
-
     private IdUtil() {
         throw new IllegalStateException("IdUtils工具异常");
     }
@@ -24,17 +21,20 @@ public class IdUtil {
     }
 
     public static synchronized String getUuid() {
-
         return String.valueOf(SnowFlakeUtil.getInstance().nextId()).replace("-", "");
+    }
+
+    public static synchronized String getId(){
+        return String.valueOf(SnowFlakeUtil.genId()).replace("-", "");
     }
 
     public static void main(String[] args) {
         System.out.println(1 << 10);
         List<String> list = new ArrayList<>();
         for (int i = 0; i < 1 << 10; i++) {
-            String id = getUuid();
+            String id = getId();
             list.add(id);
-//            System.out.println(id);
+            System.out.println(id);
         }
         System.out.println(list.stream().distinct().count());
     }
