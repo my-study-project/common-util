@@ -22,11 +22,11 @@ public class HuToolExcle {
     static final Log logger = LogFactory.get(HuToolExcle.class);
 
     /**
+     * @return void
      * @Description: 依赖hutool工具类的excle导出
      * @Param [response, clazz, list]
      * @Author: 渡劫 dujie
      * @Date: 5/15/21 11:26 AM
-     * @return void
      */
     public static void export(HttpServletResponse response, Class clazz, List<?> list) throws Exception {
         if (!list.isEmpty()) {
