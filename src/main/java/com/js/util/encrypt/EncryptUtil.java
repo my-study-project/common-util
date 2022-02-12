@@ -1,12 +1,12 @@
 package com.js.util.encrypt;
 
 import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.DESKeySpec;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.SecureRandom;
+import java.io.ByteArrayOutputStream;
+import java.security.Key;
+import java.security.KeyFactory;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 
 /**
  * 加密工具类
@@ -19,200 +19,112 @@ import java.security.SecureRandom;
  */
 public final class EncryptUtil {
 
-    private static final String PASSWORD_CRYPT_KEY = "88444488";
-
-    private static final String DES = "DES/ECB/PKCS5Padding";
-
-    private static final Integer EVEN = 2;
-
     /**
-     * 二次加密 先sha-1加密再用MD5加密
+     * 公钥加密
      *
-     * @param src
-     * @return
-     */
-    public static final String md5AndSha(String src) {
-        return md5(sha(src));
-    }
-
-    /**
-     * 二次加密 先MD5加密再用sha-1加密
-     *
-     * @param src
-     * @return
-     */
-    public static final String shaAndMd5(String src) {
-        return sha(md5(src));
-    }
-
-    /**
-     * md5加密
-     *
-     * @param src
-     * @return
-     */
-    public static final String md5(String src) {
-        return encrypt(src, "md5");
-    }
-
-    /**
-     * sha-1加密
-     *
-     * @param src
-     * @return
-     */
-    public static final String sha(String src) {
-        return encrypt(src, "sha-1");
-    }
-
-    /**
-     * md5或者sha-1加密
-     *
-     * @param src           要加密的内容
-     * @param algorithmName 加密算法名称：md5或者sha-1，不区分大小写
-     * @return
-     */
-    private static final String encrypt(String src, String algorithmName) {
-        if (src == null || "".equals(src.trim())) {
-            throw new IllegalArgumentException("请输入要加密的内容");
-        }
-        if (algorithmName == null || "".equals(algorithmName.trim())) {
-            algorithmName = "md5";
-        }
-        String encryptText = null;
-        try {
-            MessageDigest m = MessageDigest.getInstance(algorithmName);
-            m.update(src.getBytes(StandardCharsets.UTF_8));
-            byte[] s = m.digest();
-            return hex(s);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return encryptText;
-    }
-
-    /**
-     * 密码解密
-     *
+     * @param data      源数据
+     * @param publicKey 公钥(BASE64编码)
      * @return
      * @throws Exception
      */
-    public static final String decrypt(String src) {
-        try {
-            return new String(decrypt(hex2byte(src.getBytes()), PASSWORD_CRYPT_KEY.getBytes()));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    /**
-     * 密码加密
-     *
-     * @return
-     * @throws Exception
-     */
-    public static final String encrypt(String src) {
-        try {
-            return byte2hex(encrypt(src.getBytes(), PASSWORD_CRYPT_KEY.getBytes()));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    /**
-     * 加密
-     *
-     * @param src 数据源
-     * @param key 密钥，长度必须是8的倍数
-     * @return 返回加密后的数据
-     * @throws Exception
-     */
-    private static final byte[] encrypt(byte[] src, byte[] key) throws Exception {
-        // DES算法要求有一个可信任的随机数源
-        SecureRandom sr = new SecureRandom();
-        // 从原始密匙数据创建DESKeySpec对象
-        DESKeySpec dks = new DESKeySpec(key);
-        // 创建一个密匙工厂，然后用它把DESKeySpec转换成一个SecretKey对象
-        SecretKeyFactory keyFactory = SecretKeyFactory.getInstance(DES);
-        SecretKey securekey = keyFactory.generateSecret(dks);
-        // Cipher对象实际完成加密操作
-        Cipher cipher = Cipher.getInstance(DES);
-        // 用密匙初始化Cipher对象
-        cipher.init(Cipher.ENCRYPT_MODE, securekey, sr);
-        // 现在，获取数据并加密正式执行加密操作
-        return cipher.doFinal(src);
-    }
-
-    /**
-     * 解密
-     *
-     * @param src 数据源
-     * @param key 密钥，长度必须是8的倍数
-     * @return 返回解密后的原始数据
-     * @throws Exception
-     */
-    private static final byte[] decrypt(byte[] src, byte[] key) throws Exception {
-        // DES算法要求有一个可信任的随机数源
-        SecureRandom sr = new SecureRandom();
-        // 从原始密匙数据创建一个DESKeySpec对象
-        DESKeySpec dks = new DESKeySpec(key);
-        // 创建一个密匙工厂，然后用它把DESKeySpec对象转换成一个SecretKey对象
-        SecretKeyFactory keyFactory = SecretKeyFactory.getInstance(DES);
-        SecretKey securekey = keyFactory.generateSecret(dks);
-        // Cipher对象实际完成解密操作
-        Cipher cipher = Cipher.getInstance(DES);
-        // 用密匙初始化Cipher对象
-        cipher.init(Cipher.DECRYPT_MODE, securekey, sr);
-        // 现在，获取数据并解密正式执行解密操作
-        return cipher.doFinal(src);
-    }
-
-    private static final byte[] hex2byte(byte[] b) {
-        if ((b.length % EVEN) != 0) {
-            throw new IllegalArgumentException("长度不是偶数");
-        }
-        byte[] b2 = new byte[b.length / 2];
-        for (int n = 0; n < b.length; n += EVEN) {
-            String item = new String(b, n, 2);
-            b2[n / 2] = (byte) Integer.parseInt(item, 16);
-        }
-        return b2;
-    }
-
-    /**
-     * 二行制转字符串
-     *
-     * @param b
-     * @return
-     */
-    private static final String byte2hex(byte[] b) {
-        StringBuilder sb = new StringBuilder();
-        String stmp = "";
-        for (int n = 0; n < b.length; n++) {
-            stmp = (Integer.toHexString(b[n] & 0XFF));
-            if (stmp.length() == 1) {
-                sb = sb.append("0").append(stmp);
+    public static byte[] encryptPublicKey(byte[] data, String publicKey) throws Exception {
+        //使用JDK的util包下的base64实现解码
+        byte[] keyBytes = Base64.getDecoder().decode(publicKey);
+        X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(keyBytes);
+        KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
+        // 对数据加密
+        Key publicK = keyFactory.generatePublic(x509KeySpec);
+        //使用Cipher.getInstance加密
+        Cipher cipher = Cipher.getInstance(keyFactory.getAlgorithm());
+        cipher.init(Cipher.ENCRYPT_MODE, publicK);
+        int inputLen = data.length;
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        int offSet = 0;
+        byte[] cache;
+        int i = 0;
+        // 对数据分段加密
+        while (inputLen - offSet > 0) {
+            if (inputLen - offSet > MAX_ENCRYPT_BLOCK) {
+                cache = cipher.doFinal(data, offSet, MAX_ENCRYPT_BLOCK);
             } else {
-                sb = sb.append(stmp);
+                cache = cipher.doFinal(data, offSet, inputLen - offSet);
             }
+            out.write(cache, 0, cache.length);
+            i++;
+            offSet = i * MAX_ENCRYPT_BLOCK;
         }
-        return sb.toString().toUpperCase();
+        byte[] encryptedData = out.toByteArray();
+        out.close();
+        return encryptedData;
     }
 
     /**
-     * 返回十六进制字符串
+     * 私钥解密
      *
-     * @param arr
+     * @param encryptedData 已加密数据
+     * @param privateKey    私钥(BASE64编码)
      * @return
+     * @throws Exception
      */
-    private static final String hex(byte[] arr) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < arr.length; ++i) {
-            sb.append(Integer.toHexString((arr[i] & 0xFF) | 0x100), 1, 3);
+    public static byte[] decryptPrivateKey(byte[] encryptedData, String privateKey) throws Exception {
+        //使用JDK的util包下的base64实现解码
+        byte[] keyBytes = Base64.getDecoder().decode(privateKey.getBytes());
+        PKCS8EncodedKeySpec pkcs8KeySpec = new PKCS8EncodedKeySpec(keyBytes);
+        //使用KeyFactory工厂处理私钥
+        KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
+        Key privateK = keyFactory.generatePrivate(pkcs8KeySpec);
+        //使用Cipher.getInstance解密
+        Cipher cipher = Cipher.getInstance(keyFactory.getAlgorithm());
+        cipher.init(Cipher.DECRYPT_MODE, privateK);
+        int inputLen = encryptedData.length;
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        int offSet = 0;
+        byte[] cache;
+        int i = 0;
+        // 对数据分段解密
+        while (inputLen - offSet > 0) {
+            if (inputLen - offSet > MAX_DECRYPT_BLOCK) {
+                cache = cipher.doFinal(encryptedData, offSet, MAX_DECRYPT_BLOCK);
+            } else {
+                cache = cipher.doFinal(encryptedData, offSet, inputLen - offSet);
+            }
+            out.write(cache, 0, cache.length);
+            i++;
+            offSet = i * MAX_DECRYPT_BLOCK;
         }
-        return sb.toString();
+        byte[] decryptedData = out.toByteArray();
+        out.close();
+        return decryptedData;
+    }
+
+    //密钥需要注意的是生成密钥时选择格式：PKCS8(java适用)
+    static String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCe1HcHiKzaJdziPwrtmlW72gaDx+0DlhaGphVUwWkmlvWHd6mteVrr7Gs5CHaf8Y9XJbfkoHH8aEWpnhk9hYHy+JuQPYjYAgkK6IVpY69tnRrdrV42+DRPJSwDqfKrqBbYNYo9ddNSyO/uixYJPLIVwdrRTMUu19oeSSIVAvATWQIDAQAB";
+    static String privateKey = "MIICcwIBADANBgkqhkiG9w0BAQEFAASCAl0wggJZAgEAAoGBAJ7UdweIrNol3OI/Cu2aVbvaBoPH7QOWFoamFVTBaSaW9Yd3qa15WuvsazkIdp/xj1clt+SgcfxoRameGT2FgfL4m5A9iNgCCQrohWljr22dGt2tXjb4NE8lLAOp8quoFtg1ij1101LI7+6LFgk8shXB2tFMxS7X2h5JIhUC8BNZAgMBAAECf2W/toEdDZ6yos5NlLKiLEorYgEKEsw5WjToMMIbJUGTc7dU8V4wYA7DZe0jftr35NvvTd8o6dzI79e5cHH5FUWKXqEldMqeTzFfPLPgyAaevxDvyBO3Z6mCkIA1ptNLfj47JTdpabc2al6qFZfJfOro+ufT/aIE1pWoLF/GARECQQD2rLyhBiRZfFf9bnUAWaG3RNE5i7Ef7t64DBZO9frZe660a8Xk8Yxzi7KMviq9aIY6LgsV1Ake2W97CcbGNtBrAkEApNWV7YwqLRM8yBO3VIflzsbtuk3RjicwjxzJzkLhR91xvWQDLx50L7kt0e1SNcuVJw3Xr0yGfPNAw4vE9FQMSwJAewyn+9tIfqscaXuUOdx8YyOdCwu4C6nox/6fkjv6KkscVzv7t70WxvzE0Jh8UYe2jYcyWG0xL4Zfqgyyb2YgiQJAKxltyl8L6B1Pl0EQfpnKDPcW0c/nKzQ0DjeIzNXP8eqFAvBTpM5hstjIkktrY4WHyl5kNwHbaHByTq8NIJWZYQJASWfwM30dJ5YAVq3ZMYkY0AeyQuJptdW4m3UJZWb2HyNU/KfPnGJ+OEO2A7XaFeRfO177RUvCqiwPAL4Y4pFvdw==";
+    //加密算法RSA  //使用默认的算法
+    public static final String KEY_ALGORITHM = "RSA";
+    //RSA最大加密明文大小
+    private static final int MAX_ENCRYPT_BLOCK = 117;
+    //RSA最大解密密文大小  ; 需要注意，如果用的是2048位密钥，这里需要改为256 ; 1024密钥是 128
+    private static final int MAX_DECRYPT_BLOCK = 256 / 2;
+
+    public static void main(String[] args) throws Exception {
+        test();
+    }
+
+    static void test() throws Exception {
+        System.out.println("—— 公钥加密 —— 私钥解密 ——");
+        String source = "小程序服务端加解密!";//需要加密的原文
+        System.out.println("加密前原文:  " + source);
+        byte[] data = source.getBytes();
+        byte[] encodedData = encryptPublicKey(data, publicKey);//加密
+        //没有处理过的密文字符串
+        System.out.println("加密后内容:  " + new String(encodedData));
+        //加密后问密文需要使用Base64编码然后转换成string返回前端
+        String encodedDataStr = new String(Base64.getEncoder().encode(encodedData));
+        System.out.println("---:base64处理:  " + encodedDataStr);
+        byte[] decodedData = decryptPrivateKey(encodedData, privateKey);//解密
+        String str = new String(decodedData);
+        System.out.println("解密后内容:  " + str);//小程序服务端加解密!
     }
 
 }
