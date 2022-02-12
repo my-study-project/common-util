@@ -80,11 +80,7 @@ public class SM2Engine {
         curveLength = (ecParams.getCurve().getFieldSize() + 7) / 8;
     }
 
-    public byte[] processBlock(
-            byte[] in,
-            int inOff,
-            int inLen)
-            throws InvalidCipherTextException {
+    public byte[] processBlock(byte[] in, int inOff, int inLen) throws InvalidCipherTextException {
         if (forEncryption) {
             return encrypt(in, inOff, inLen);
         } else {
@@ -119,8 +115,7 @@ public class SM2Engine {
             kPB = ((ECPublicKeyParameters) ecKey).getQ().multiply(k).normalize();
 
             kdf(digest, kPB, c2);
-        }
-        while (notEncrypted(c2, in, inOff));
+        } while (notEncrypted(c2, in, inOff));
 
         byte[] c3 = new byte[digest.getDigestSize()];
 
@@ -138,8 +133,7 @@ public class SM2Engine {
         }
     }
 
-    private byte[] decrypt(byte[] in, int inOff, int inLen)
-            throws InvalidCipherTextException {
+    private byte[] decrypt(byte[] in, int inOff, int inLen) throws InvalidCipherTextException {
         byte[] c1 = new byte[curveLength * 2 + 1];
 
         System.arraycopy(in, inOff, c1, 0, c1.length);
@@ -251,8 +245,7 @@ public class SM2Engine {
         BigInteger k;
         do {
             k = BigIntegers.createRandomBigInteger(qBitLength, random);
-        }
-        while (k.equals(BigIntegers.ZERO) || k.compareTo(ecParams.getN()) >= 0);
+        } while (k.equals(BigIntegers.ZERO) || k.compareTo(ecParams.getN()) >= 0);
 
         return k;
     }
