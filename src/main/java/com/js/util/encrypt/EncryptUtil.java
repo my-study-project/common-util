@@ -1,7 +1,13 @@
 package com.js.util.encrypt;
 
+import com.alipay.api.AlipayApiErrorEnum;
+import com.alipay.api.AlipayApiException;
+import com.alipay.api.internal.util.AlipaySignature;
+import com.alipay.api.internal.util.StringUtils;
+
 import javax.crypto.Cipher;
 import java.io.ByteArrayOutputStream;
+import java.io.UnsupportedEncodingException;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.spec.PKCS8EncodedKeySpec;
