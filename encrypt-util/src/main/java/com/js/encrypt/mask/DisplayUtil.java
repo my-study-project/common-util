@@ -1,4 +1,4 @@
-package com.js.util.mask;
+package com.js.encrypt.mask;
 
 import org.apache.commons.lang3.StringUtils;
 

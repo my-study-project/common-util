@@ -1,4 +1,11 @@
-package com.js.util.encrypt;
+package com.js.encrypt;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
+import com.alibaba.fastjson.parser.Feature;
+import com.js.encrypt.encryption.RsaEncryption;
+import com.js.encrypt.enums.EncodingEnum;
+import com.js.encrypt.enums.KeyFlagEnum;
 
 import javax.crypto.Cipher;
 import java.io.ByteArrayOutputStream;
@@ -7,6 +14,8 @@ import java.security.KeyFactory;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 加密工具类
@@ -15,7 +24,6 @@ import java.util.Base64;
  * <p>
  * sha加密出来的长度是40位
  *
- * @author 渡劫 dujie
  */
 public final class EncryptUtil {
 
@@ -112,19 +120,35 @@ public final class EncryptUtil {
     }
 
     static void test() throws Exception {
-        System.out.println("—— 公钥加密 —— 私钥解密 ——");
-        String source = "小程序服务端加解密!";//需要加密的原文
-        System.out.println("加密前原文:  " + source);
-        byte[] data = source.getBytes();
-        byte[] encodedData = encryptPublicKey(data, publicKey);//加密
-        //没有处理过的密文字符串
-        System.out.println("加密后内容:  " + new String(encodedData));
-        //加密后问密文需要使用Base64编码然后转换成string返回前端
-        String encodedDataStr = new String(Base64.getEncoder().encode(encodedData));
-        System.out.println("---:base64处理:  " + encodedDataStr);
-        byte[] decodedData = decryptPrivateKey(encodedData, privateKey);//解密
-        String str = new String(decodedData);
-        System.out.println("解密后内容:  " + str);//小程序服务端加解密!
+        // http JSON 请求 公钥加密私钥解密 私钥加签 公钥验签
+        RsaEncryption privateRsa =
+                RsaEncryption.of(privateKey.getBytes(EncodingEnum.DEFAULT_ENCODING.getEncoding()), KeyFlagEnum.PRIVATE_KEY);
+        RsaEncryption publicRsa =
+                RsaEncryption.of(Base64.getDecoder().decode(publicKey), KeyFlagEnum.PUBLIC_KEY);
+//        Map<String, String> params = JSON.parseObject("inputStr", new TypeReference<Map<String, String>>() {
+//        });
+//        String sign = privateRsa.sign(params);
+//        Map<String, String> params1 = JSON.parseObject("decryptData", new TypeReference<HashMap<String, String>>() {
+//        }, Feature.OrderedField);
+//        boolean checkSignFlag = publicRsa.checkSign(params, params.get("sign"));
+        String test100 = publicRsa.encrypt("{\"test100\":100}");
+        System.out.println(test100);
+//        String decrypt = privateRsa.decrypt(test100);
+//        System.out.println(decrypt);
+
+//        System.out.println("—— 公钥加密 —— 私钥解密 ——");
+//        String source = "小程序服务端加解密!";//需要加密的原文
+//        System.out.println("加密前原文:  " + source);
+//        byte[] data = source.getBytes();
+//        byte[] encodedData = encryptPublicKey(data, publicKey);//加密
+//        //没有处理过的密文字符串
+//        System.out.println("加密后内容:  " + new String(encodedData));
+//        //加密后问密文需要使用Base64编码然后转换成string返回前端
+//        String encodedDataStr = new String(Base64.getEncoder().encode(encodedData));
+//        System.out.println("---:base64处理:  " + encodedDataStr);
+//        byte[] decodedData = decryptPrivateKey(encodedData, privateKey);//解密
+//        String str = new String(decodedData);
+//        System.out.println("解密后内容:  " + str);//小程序服务端加解密!
     }
 
 }
