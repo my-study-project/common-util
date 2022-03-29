@@ -11,6 +11,7 @@
     <modules>
         <module>excel-util</module>
         <module>encrypt-util</module>
+        <module>net-util</module>
     </modules>
     <name>common-util</name>
 
@@ -18,17 +19,18 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <jackson.version>2.13.1</jackson.version>
         <common.lang3.version>3.12.0</common.lang3.version>
+        <commons.codec.version>1.15</commons.codec.version>
+        <javax.servlet.version>4.0.1</javax.servlet.version>
+        <commons.io.version>2.11.0</commons.io.version>
         <common.net.version>3.8.0</common.net.version>
         <easyexcel.version>3.0.5</easyexcel.version>
+        <jackson.version>2.13.1</jackson.version>
         <bcprov.version>1.70</bcprov.version>
-        <commons.io.version>2.11.0</commons.io.version>
         <hutool.version>5.7.20</hutool.version>
         <poi.version>5.0.0</poi.version>
-        <commons.codec.version>1.15</commons.codec.version>
         <servlet.api.version>2.5</servlet.api.version>
-        <javax.servlet.version>4.0.1</javax.servlet.version>
+        <fastjson.version>1.2.80</fastjson.version>
     </properties>
 
     <dependencies>
@@ -125,6 +127,11 @@
                 <artifactId>javax.servlet-api</artifactId>
                 <version>${javax.servlet.version}</version>
                 <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>${fastjson.version}</version>
             </dependency>
 
 

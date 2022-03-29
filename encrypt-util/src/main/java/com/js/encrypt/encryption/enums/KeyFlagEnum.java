@@ -1,4 +1,4 @@
-package com.js.encrypt.enums;
+package com.js.encrypt.encryption.enums;
 
 /**
  * 公私钥标记

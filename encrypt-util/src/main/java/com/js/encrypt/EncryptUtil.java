@@ -1,8 +1,8 @@
 package com.js.encrypt;
 
 import com.js.encrypt.encryption.RsaEncryption;
-import com.js.encrypt.enums.EncodingEnum;
-import com.js.encrypt.enums.KeyFlagEnum;
+import com.js.encrypt.encryption.enums.EncodingEnum;
+import com.js.encrypt.encryption.enums.KeyFlagEnum;
 
 import javax.crypto.Cipher;
 import java.io.ByteArrayOutputStream;

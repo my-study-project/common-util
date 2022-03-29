@@ -1,8 +1,8 @@
 package com.js.encrypt.encryption;
 
-import com.js.encrypt.enums.EncodingEnum;
-import com.js.encrypt.enums.KeyFlagEnum;
-import com.js.encrypt.enums.ParamEnum;
+import com.js.encrypt.encryption.enums.EncodingEnum;
+import com.js.encrypt.encryption.enums.KeyFlagEnum;
+import com.js.encrypt.encryption.enums.ParamEnum;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import javax.crypto.Cipher;
